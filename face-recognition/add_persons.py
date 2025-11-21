@@ -17,11 +17,15 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # Initialize the face detector (Choose one of the detectors)
 # detector = Yolov5Face(model_file="face_detection/yolov5_face/weights/yolov5n-face.pt")
-detector = SCRFD(model_file="D:/magang/comvis/crowd_control_web/face-recognition/face_detection/scrfd/weights/scrfd_2.5g_bnkps.onnx")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+detector_path = os.path.join(BASE_DIR, "face_detection", "scrfd", "weights", "scrfd_2.5g_bnkps.onnx")
+detector = SCRFD(model_file=detector_path)
 
 # Initialize the face recognizer
+recognizer_path = os.path.join(BASE_DIR, "face_recognition", "arcface", "weights", "arcface_r100.pth")
 recognizer = iresnet_inference(
-    model_name="r100", path="D:/magang/comvis/crowd_control_web/face-recognition/face_recognition/arcface/weights/arcface_r100.pth", device=device
+    model_name="r100", path=recognizer_path, device=device
 )
 
 
@@ -141,6 +145,7 @@ def add_persons(backup_dir, add_persons_dir, faces_save_dir, features_path):
 
     print("Successfully added new person!")
 
+datasets_path = os.path.join(BASE_DIR, "datasets")
 
 if __name__ == "__main__":
     # Parse command line arguments
@@ -148,25 +153,29 @@ if __name__ == "__main__":
     parser.add_argument(
         "--backup-dir",
         type=str,
-        default="D:/magang/comvis/crowd_control_web/face-recognition/datasets/backup",
+        default=os.path.join(datasets_path, "backup"),
+        # "D:/magang/comvis/crowd_control_web/face-recognition/datasets/backup",
         help="Directory to save person data.",
     )
     parser.add_argument(
         "--add-persons-dir",
         type=str,
-        default="D:/magang/comvis/crowd_control_web/face-recognition/datasets/new_persons",
+        default=os.path.join(datasets_path, "new_persons"),
+        # "D:/magang/comvis/crowd_control_web/face-recognition/datasets/new_persons",
         help="Directory to add new persons.",
     )
     parser.add_argument(
         "--faces-save-dir",
         type=str,
-        default="D:/magang/comvis/crowd_control_web/face-recognition/datasets/data/",
+        default=os.path.join(datasets_path, "data"),
+        # "D:/magang/comvis/crowd_control_web/face-recognition/datasets/data/",
         help="Directory to save faces.",
     )
     parser.add_argument(
         "--features-path",
         type=str,
-        default="D:/magang/comvis/crowd_control_web/face-recognition/datasets/face_features/feature",
+        default=os.path.join(datasets_path, "face_features", "feature"),
+        # default="D:/magang/comvis/crowd_control_web/face-recognition/datasets/face_features/feature",
         help="Path to save face features.",
     )
     opt = parser.parse_args()
